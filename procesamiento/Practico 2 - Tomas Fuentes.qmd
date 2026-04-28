@@ -1,0 +1,208 @@
+---
+title: "Practico 2 - Tomas Fuentes"
+author: "Tomas Fuentes"
+format: html
+editor: visual
+---
+
+## Practico 2
+
+Durante este documento de quarto iremos visualizando la evolucion de trabajo de mi practico 2 del optativo. Trabajaremos con la base de datos de Latinobarometro del año 2024
+
+## Cargamos paquetes
+
+```{r librerias, echo=FALSE, warning=FALSE, message=FALSE, collapse=TRUE}
+install.packages("pacman")
+
+library(pacman)
+library(readr)
+
+pacman::p_load(sjlabelled,
+               dplyr, #Manipulacion de datos
+              stargazer, #Tablas
+              sjmisc, # Tablas
+              summarytools, # Tablas
+              kableExtra, #Tablas
+              sjPlot, #Tablas y gráficos
+              corrplot, # Correlaciones
+              sessioninfo, # Información de la sesión de trabajo
+              ggplot2,
+              haven) 
+
+options(scipen = 999) # para desactivar notacion cientifica
+rm(list = ls()) # para limpiar el entorno de trabajo
+```
+
+## Cargamos base de datos del año 2024
+
+```{r datos}
+#| echo: false
+#| warning: false
+#| message: false
+
+load(url("https://github.com/Kevin-carrasco/metod1-MCS/raw/main/files/data/external_data/latinobarometro2020.RData"))
+save(latinobarometro2020, file = "base de datos.rdata")
+
+```
+
+## Observamos la dimension de la base de datos
+
+A traves del codigo dim y view podemos visualizar la dimension y las variables de la base de datos que utilizaremos
+
+```{r}
+dim(latinobarometro2020)
+View(latinobarometro2020)
+```
+
+## Buscamos conceptos de interes
+
+En este caso buscaremos buscar conceptos relacionados a la confianza, para ver si podemos seleccionar variables relacionados a esta y a las instituciones electorales del pais por posicion ideologica a traves de escala izquierda-derecha
+
+```{r}
+find_var(data = latinobarometro2020,"Confianza")
+find_var(data = latinobarometro2020, "Izquierda")
+
+```
+
+# Elegimos las variables a utilizar, teniendo en cuenta que buscamos investigar la confianza y la legitimidad de la democracia a traves de la posicion politica.
+
+```{r}
+proc_bdd <- latinobarometro2020 %>% select(P11STGBS_A, # Satisfaccion democracia
+                          p10stgbs, # Apoyo a la democracia
+                          p13st_h, # Confianza sistema electoral
+                          sexo,# sexo
+                          p18st) # escala iz- der
+                        
+# Observamos las variables
+
+sjlabelled::get_label(proc_bdd)
+
+# eliminamos datos na, o que pueden ser tratados como na, como por ejemplo : -2,
+# -1 y 97 en el caso de la variable escala izq - der
+
+proc_bdd <- proc_bdd %>%
+  mutate(across(c(P11STGBS_A,
+                  p10stgbs,
+                  p13st_h,
+                  p18st),
+                ~ifelse(as.numeric(.) %in% c(-1, -2, 97),
+                        NA,
+                        as.numeric(.))))
+proc_bdd <- na.omit(proc_bdd)
+
+# Etiquetamos las variables para facilitar el trabajo con ellas
+
+proc_bdd <- proc_bdd %>% rename("satisfaccion_democracia"= P11STGBS_A, 
+                                  "apoyo_democracia"=p10stgbs, 
+                                  "conf_institucion_electoral"=p13st_h,
+                                  "escala_izq_der"=p18st) 
+
+# descriptivos de variables
+
+frq(proc_bdd$satisfaccion_democracia)
+frq(proc_bdd$apoyo_democracia)
+frq(proc_bdd$conf_institucion_electoral)
+frq(proc_bdd$escala_izq_der)
+
+# etiquetamos las categorias de las variables relacionadas con la satisfaccion
+
+proc_bdd$satisfaccion_democracia <- set_labels(proc_bdd$satisfaccion_democracia,
+            labels=c( "Ninguna satisfaccion"=1,
+                      "Poca satisfaccion"=2,
+                      "Algo de satisfaccion"=3,
+                      "Mucha satisfaccion"=4))
+
+proc_bdd$apoyo_democracia <- set_labels(proc_bdd$apoyo_democracia,
+            labels=c( "Nada de apoyo"=1,
+                      "Un poco de apoyo"=2,
+                      "Mucho apoyo"=3))
+
+proc_bdd$conf_institucion_electoral <- set_labels(proc_bdd$conf_institucion_electoral,
+            labels=c( "Nada de confianza"=1,
+                      "Poca confianza"=2,
+                      "Algo de confianza"=3,
+                      "Mucha confianza"=4))
+
+proc_bdd$sexo <- set_labels(proc_bdd$sexo,
+                            labels = c("Hombre"=1,
+                                       "Mujer"=2))
+proc_bdd$sexo <- as_factor(proc_bdd$sexo)
+```
+
+# Descripcion de mis variables a utilizar, operacionalizacion y pregunta de investigacion.
+
+Nuestra pregunta de investigacion es:
+
+¿Como varian los niveles de confianza y legitimidad democratica segun la posicion politica de las personas encuestadas a traves de latinobarometro?\
+\
+Para esto entonces nuestra finalidad es analizar la relacion entre posicion politica y niveles de confianza y legitimidad democratica con los datos obtenidos de la encuesta latinobarometro 2020
+
+Se seleccionaron las variables utilizadas en función del objetivo de investigación, orientado a analizar la confianza y legitimacion con la democracia según la posición política de las personas. Para esto entonces, se eligieron variables como el sexo, orientacion izquierda - derecha, nivel de satisfaccion con la democracia, apoyo a la democracia y confianza en el sistema electoral, las cuales las ultimas 3 podemos entenderlas como parte de la dimension de la confianza y legitimacion de la democracia.
+
+Operacionalizacion de las variables que trabajaremos:
+
+Variable Sexo: Esta variable posee una caracteristica demografica, correspondiendo a una variable nominal. Se entiende entonces que a traves de esta variable se clasifica a las personas sin un orden jerarquico y podemos utilizarla para poder observar e identificar posibles diferencias de genero en sus niveles de satisfaccion con la democracia orientada por su posicion politica.
+
+Variable Satisfaccion con la democracia: Esta variable , corresponde a una variable a nivel ordinal, dado que por su composicion mide distintos niveles de satisfaccion con la democracia, mediante categorias. Funciona como variable dependiente
+
+Variable Confianza en las instituciones electorales del pais: Esta variable tiene tambien un caracter ordinal, la cual ordena a traves de la medicion de sus categorias, los niveles de confianza en la democracia, nos permite observar la percepcion de los encuestas respecto de las instituciones electorales que componen su pais, la cual es bastante importante para poder observar la legitimidad de la democracia por la confianza en las instituciones que permiten la eleccion de los representantes de la sociedad. Funciona como variable dependiente
+
+Variable Apoyo a la democracia: Variable la cual tambien posee una caracteristica ordinal, ya que a traves de esta observamos la medicion de posibles niveles de adhesion hacia la democracia como sistema politico. Funciona como variable dependiente
+
+Variable Escala de izquierda a derecha: Esta variable cumple con su caracteristica de intervalo, donde mide en una escala numerica el posicionamiento ideologico del encuestado, esta sera utilizada como mi variable independiente de investigacion.
+
+Observese la siguiente tabla
+
+| Dimensión | Variable | Tipo |
+|----|----|----|
+| Posición política | Escala izquierda-derecha | Independiente |
+| Confianza / legitimidad democrática | Satisfacción con la democracia, apoyo a la democracia y confianza en la institución electoral del pais | Dependiente |
+| Sexo | Sexo | Variable de control |
+
+Si bien las variables “satisfacción con la democracia”, “apoyo a la democracia” y “confianza en la institución electoral” fueron operacionalizadas de manera independiente, para efectos analíticos serán trabajadas de forma conjunta como una dimensión general de confianza y legitimidad democrática. Esto se debe a que las tres variables representan distintas evaluaciones subjetivas sobre el funcionamiento, apoyo y confianza hacia el sistema democrático e institucional.
+
+### Variable de control
+
+La variable sexo fue considerada como variable de control debido a que representa una característica sociodemográfica que puede influir en las percepciones y actitudes hacia la democracia. Su incorporación permite complementar el análisis principal entre posición política y confianza democrática, considerando posibles diferencias de género en los niveles de satisfacción con la democracia, apoyo democrático y confianza en las instituciones electorales.
+
+Las variables satisfacción con la democracia, apoyo a la democracia y confianza en la institución electoral fueron seleccionadas debido a que representan distintas dimensiones relacionadas con la confianza y legitimidad democrática. Estas variables serán utilizadas posteriormente para la construcción de nuestro índice para el Trabajo 3.
+
+# Tablas y graficos descriptivos
+
+```{r}
+# Descriptivos variable sexo
+
+table(proc_bdd$sexo)
+
+prop.table(table(proc_bdd$sexo))*100
+
+# Descriptivos variable satisfaccion democratica
+
+table(proc_bdd$satisfaccion_democracia)
+
+prop.table(table(proc_bdd$satisfaccion_democracia))*100
+
+# Descriptivos variable escala izquierda - derecha
+
+summary(proc_bdd$escala_izq_der)
+
+mean(proc_bdd$escala_izq_der, na.rm = TRUE)
+
+median(proc_bdd$escala_izq_der, na.rm = TRUE)
+
+# Graficos de la distribucion ideologica
+
+ggplot(proc_bdd,
+       aes(x = escala_izq_der)) +
+  geom_histogram(binwidth = 1) +
+  labs(title = "Distribucion de posicion ideologica",
+       x = "Escala izquierda-derecha",
+       y = "Frecuencia")
+
+# Grafico de nivel de satisfaccion segun posicion politica
+
+ggplot(proc_bdd,
+       aes(x = as.factor(escala_izq_der),
+           fill = as.factor(satisfaccion_democracia))) +
+  geom_bar(position = "fill")
+```
