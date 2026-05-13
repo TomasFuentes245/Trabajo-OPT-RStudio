@@ -33,7 +33,7 @@ options(scipen = 999) # para desactivar notacion cientifica
 rm(list = ls()) # para limpiar el entorno de trabajo
 ```
 
-## Cargamos base de datos del año 2024
+## Cargamos base de datos del año 2020
 
 ```{r datos}
 #| echo: false
@@ -154,7 +154,7 @@ Variable Escala de izquierda a derecha: Esta variable cumple con su caracteristi
 Observese la siguiente tabla
 
 | Dimensión | Variable | Tipo |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | Posición política | Escala izquierda-derecha | Independiente |
 | Confianza / legitimidad democrática | Satisfacción con la democracia, apoyo a la democracia y confianza en la institución electoral del pais | Dependiente |
 | Sexo | Sexo | Variable de control |

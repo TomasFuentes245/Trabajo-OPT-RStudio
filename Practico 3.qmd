@@ -1,0 +1,46 @@
+---
+title: "Practico 3 - Tomas Fuentes"
+author: "Tomas Fuentes"
+format: html
+bibliography: input/bib/Estella2020.bib
+editor: visual
+---
+
+## Introduccion
+
+Dentro de nuestro contexto de America Latina, hemos presenciado una alta variabilidad en los tipos de gobierno dentro de la region, existiendo una disparidad constante entre los sectores politicos de izquierda y los sectores politicos de derecha. Teniendo en cuenta esto, se observa que en los ultimos años los gobiernos de cada pais van cambiando de un sector a otro dependiendo de sus contextos especificos de cada pais. Tenemos los ejemplos de Brazil de un paso de un gobierno de derecha a izquierda, Chile de un gobierno de derecha a izquierda, o teniendo en cuenta mas el aspecto contemporaneos cambios de izquierda a derecha.
+
+Si bien para efectos de este trabajo, la finalidad es buscar observar, entender y analizar ¿Como varian los niveles de confianza y legitimidad democratica segun la posicion politica de las personas encuestadas a traves de latinobarometro?. Entendiendo que America Latina muestra dinamicas variables por factores sociopoliticos [@estella_de_noriega_confianza_2020]
+
+## Cargamos paquetes
+
+```{r librerias, echo=FALSE, warning=FALSE, message=FALSE, collapse=TRUE}
+#install.packages("pacman")
+#install.packages("citr")
+library(pacman)
+library(readr)
+
+pacman::p_load(sjlabelled,
+               dplyr, #Manipulacion de datos
+              stargazer, #Tablas
+              sjmisc, # Tablas
+              summarytools, # Tablas
+              kableExtra, #Tablas
+              sjPlot, #Tablas y gráficos
+              corrplot, # Correlaciones
+              sessioninfo, # Información de la sesión de trabajo
+              ggplot2,
+              haven) 
+
+options(scipen = 999) # para desactivar notacion cientifica
+rm(list = ls()) # para limpiar el entorno de trabajo
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
