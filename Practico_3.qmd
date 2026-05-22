@@ -6,13 +6,7 @@ bibliography: input/bib/Estella2020.bib
 editor: visual
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = FALSE,      # oculta el codigo
-  warning = FALSE,   # oculta warnings
-  message = FALSE    # oculta mensajes
-)
-```
+---
 
 ## Introduccion
 
@@ -63,16 +57,6 @@ A traves del codigo dim y view podemos visualizar la dimension y las variables d
 dim(latinobarometro2020)
 
 View(latinobarometro2020)
-```
-
-## Buscamos conceptos de interes
-
-En este caso entonces, buscaremos conceptos de interes que tengan relacion con nuestro tema de investigacion, como buscamos medir la satisfaccion con la democracia y su correlacion con la posicion politica, para esto buscaremos variables que se relacionen con la confianza en las instituciones, la posicion politica de izquierda hacia derecha y valoracion presidencial, situacion economica actual del pais.
-
-```{r conceptos, echo=FALSE, warning=FALSE, message=FALSE, collapse=TRUE}
-find_var(data = latinobarometro2020,"Confianza")
-find_var(data = latinobarometro2020, "Izquierda")
-find_var(data = latinobarometro2020, "país")
 ```
 
 ## Elegimos las variables a utilizar
@@ -325,7 +309,7 @@ ggplot(proc_data,
 
 ## Creacion de Indice de satisfaccion con la democracia y correlacion con posicion politica
 
-```{r indice, echo=FALSE, warning=FALSE, message=FALSE, collapse=TRUE}
+```{r}
 
 library(psych)
 
@@ -341,11 +325,8 @@ psych::alpha(correlaciones_num)
 
 resultado_alpha <- psych::alpha(correlaciones_num)
 
-resultado_alpha
-
-resultado_alpha$total
-
-resultado_alpha$total$raw_alpha
+alpha_total <- resultado_alpha$total
+alpha_raw <- resultado_alpha$total$raw_alpha
 
 proc_data$indice_democracia <- rowMeans(
   correlaciones_num,

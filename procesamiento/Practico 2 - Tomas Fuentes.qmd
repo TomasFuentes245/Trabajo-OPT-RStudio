@@ -56,7 +56,7 @@ View(latinobarometro2020)
 
 ## Buscamos conceptos de interes
 
-En este caso buscaremos buscar conceptos relacionados a la confianza, para ver si podemos seleccionar variables relacionados a esta y a las instituciones electorales del pais por posicion ideologica a traves de escala izquierda-derecha
+En este caso buscaremos buscar conceptos relacionados a la confianza, para ver si podemos seleccionar variables relacionados a esta y a las instituciones electorales del pais por posicion ideologica a traves de escala izquierda-derecha, situacion del pais actual
 
 ```{r}
 find_var(data = latinobarometro2020,"Confianza")
@@ -154,7 +154,7 @@ Variable Escala de izquierda a derecha: Esta variable cumple con su caracteristi
 Observese la siguiente tabla
 
 | Dimensión | Variable | Tipo |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | Posición política | Escala izquierda-derecha | Independiente |
 | Confianza / legitimidad democrática | Satisfacción con la democracia, apoyo a la democracia y confianza en la institución electoral del pais | Dependiente |
 | Sexo | Sexo | Variable de control |
