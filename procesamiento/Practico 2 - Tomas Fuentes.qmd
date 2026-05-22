@@ -27,7 +27,8 @@ pacman::p_load(sjlabelled,
               corrplot, # Correlaciones
               sessioninfo, # Información de la sesión de trabajo
               ggplot2,
-              haven) 
+              haven,
+              gtsummary) 
 
 options(scipen = 999) # para desactivar notacion cientifica
 rm(list = ls()) # para limpiar el entorno de trabajo
@@ -92,17 +93,26 @@ proc_bdd <- na.omit(proc_bdd)
 
 # Etiquetamos las variables para facilitar el trabajo con ellas
 
-proc_bdd <- proc_bdd %>% rename("satisfaccion_democracia"= P11STGBS_A, 
+proc_data <- proc_data %>% rename("satisfaccion_democracia"= P11STGBS_A, 
                                   "apoyo_democracia"=p10stgbs, 
                                   "conf_institucion_electoral"=p13st_h,
                                   "escala_izq_der"=p18st) 
 
-# descriptivos de variables
+## Estadisticos descriptivos
+tabla_descriptiva <- proc_data %>%
+  select(sexo,
+         escala_izq_der,
+         satisfaccion_democracia,
+         apoyo_democracia,
+         conf_institucion_electoral) %>%
+  tbl_summary(
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"
+    )
+  )
 
-frq(proc_bdd$satisfaccion_democracia)
-frq(proc_bdd$apoyo_democracia)
-frq(proc_bdd$conf_institucion_electoral)
-frq(proc_bdd$escala_izq_der)
+tabla_descriptiva
 
 # etiquetamos las categorias de las variables relacionadas con la satisfaccion
 
@@ -154,7 +164,7 @@ Variable Escala de izquierda a derecha: Esta variable cumple con su caracteristi
 Observese la siguiente tabla
 
 | Dimensión | Variable | Tipo |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | Posición política | Escala izquierda-derecha | Independiente |
 | Confianza / legitimidad democrática | Satisfacción con la democracia, apoyo a la democracia y confianza en la institución electoral del pais | Dependiente |
 | Sexo | Sexo | Variable de control |
