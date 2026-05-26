@@ -2,17 +2,22 @@
 title: "Practico 3 - Tomas Fuentes"
 author: "Tomas Fuentes"
 format: html
-bibliography: input/bib/Estella2020.bib
+bibliography: input/bib/Cereceda-Marambio y Torres-Solis.bib
 editor: visual
 ---
 
 ------------------------------------------------------------------------
 
+## La confianza institucional como forma de legitimidad democratica en America Latina, un analisis segun posicion politica
+
+
 ## Introduccion
 
-Dentro de nuestro contexto de America Latina, hemos presenciado una alta variabilidad en los tipos de gobierno dentro de la region, existiendo una disparidad constante entre los sectores politicos de izquierda y los sectores politicos de derecha. Teniendo en cuenta esto, se observa que en los ultimos años los gobiernos de cada pais van cambiando de un sector a otro dependiendo de sus contextos especificos de cada pais. Tenemos los ejemplos de Brazil de un paso de un gobierno de derecha a izquierda, Chile de un gobierno de derecha a izquierda, o teniendo en cuenta mas el aspecto contemporaneos cambios de izquierda a derecha.
+Dentro de nuestro contexto de America Latina, hemos presenciado una alta variabilidad en los tipos de gobierno dentro de la region, existiendo una disparidad constante entre los sectores politicos de izquierda y los sectores politicos de derecha. Teniendo en cuenta esto, se observa que en los ultimos años los gobiernos de cada pais van cambiando de un sector a otro dependiendo de sus contextos especificos de cada pais. Tenemos los ejemplos de Brazil de un paso de un gobierno de derecha a izquierda, Chile de un gobierno de derecha a izquierda, o teniendo en cuenta mas el aspecto contemporaneos cambios de izquierda a derecha. La crecion de un indice nos permite aproximar dimensiones de legitimidad y satisfacción democrática mediante confianza institucional
 
-Si bien para efectos de este trabajo, la finalidad es buscar observar, entender y analizar ¿Como varian los niveles de confianza y legitimidad democratica segun la posicion politica de las personas encuestadas a traves de latinobarometro?. Entendiendo que America Latina muestra dinamicas variables por factores sociopoliticos [@estella_de_noriega_confianza_2020]
+Para efectos de este trabajo entonces, buscamos aproximarnos, a demostrar como la confianza en las instituciones pueden permitir la posibilidad de que se genere una mayor legitimidad y satisfaccion con el sistema democratico. Ya planteaba Cereceda-Marambio que los regímenes democráticos se encuentran ligados al prestigio de las instituciones, dado que cada sociedad posee un orden particular constituido por diversas instituciones políticas, económicas, sociales y culturales que cumplen determinadas funciones, por lo que es importante la valoración que dan los ciudadanos a estas instituciones como parte misma del proceso de construcción de la democracia. (@cereceda-marambio_satisfaccion_2017)
+
+Para el desarrollo de esta investigación, se utilizará como fuente de datos la encuesta de [Latinobarómetro]{.underline} correspondiente al año 2020. A partir de esta base de datos, se construirá un índice de confianza institucional compuesto por variables asociadas a la confianza en instituciones políticas y estatales, tales como el Congreso, las Fuerzas Armadas, la policía, el Poder Judicial y la institución electoral. El objetivo será analizar cómo varía este índice según la posición política de los encuestados.
 
 ```{r librerias, echo=FALSE, warning=FALSE, message=FALSE, collapse=TRUE}
 #install.packages("pacman")
@@ -50,9 +55,11 @@ save(latinobarometro2020, file = "base de datos.rdata")
 ```{r variables, echo=FALSE, warning=FALSE, message=FALSE, collapse=TRUE}
 
 
-proc_data <- latinobarometro2020 %>% select(P11STGBS_A, # Satisfaccion democracia
-                          p10stgbs, # Apoyo a la democracia
-                          p13st_h, # Confianza sistema electoral
+proc_data <- latinobarometro2020 %>% select(p13st_d, # Congreso
+                          p13st_h, # Institucion electoral del pais
+                          P13STGBS_A, #Fuerzas armadas
+                          P13STGBS_B, #Policia
+                          p13st_f, #Poder Judicial
                           sexo,# sexo
                           p18st) # escala izq - der
 
@@ -60,78 +67,39 @@ proc_data <- latinobarometro2020 %>% select(P11STGBS_A, # Satisfaccion democraci
 
 sjlabelled::get_label(proc_data)
 
-# eliminamos datos na, o que pueden ser tratados como na, como por ejemplo : -2,
-# -1 y 97 en el caso de la variable escala izq - der
+# Renombramos variables
 
 proc_data <- proc_data %>%
-  mutate(across(c(P11STGBS_A,
-                  p10stgbs,
-                  p13st_h,
-                  p18st),
-                ~ifelse(as.numeric(.) %in% c(-1, -2, 97),
-                        NA,
-                        as.numeric(.))))
+  rename(
+    confianza_congreso = p13st_d,
+    confianza_institucion_electoral = p13st_h,
+    confianza_ffaa = P13STGBS_A,
+    confianza_policia = P13STGBS_B,
+    confianza_poder_judicial = p13st_f,
+    escala_izq_der = p18st
+  )
+
+#Eliminamos NAs
+
+proc_data <- proc_data %>%
+  mutate(across(
+    c(confianza_congreso,
+      confianza_institucion_electoral,
+      confianza_ffaa,
+      confianza_policia,
+      confianza_poder_judicial,
+      escala_izq_der),
+    ~ifelse(as.numeric(.) %in% c(-1,-2,97),
+            NA,
+            as.numeric(.))
+  ))
 
 proc_data <- na.omit(proc_data)
 
-# Etiquetamos las variables para facilitar el trabajo con ellas
-
-proc_data <- proc_data %>% rename("satisfaccion_democracia"= P11STGBS_A, 
-                                  "apoyo_democracia"=p10stgbs, 
-                                  "conf_institucion_electoral"=p13st_h,
-                                  "escala_izq_der"=p18st) 
-
-# =====================================================
-# RECODIFICACION POSICION POLITICA
-# =====================================================
-
 proc_data <- proc_data %>%
   mutate(
-    posicion_politica = case_when(escala_izq_der >= 0 &
-                                  escala_izq_der <= 3 ~ "Izquierda",
-                                  escala_izq_der >= 4 &
-                                  escala_izq_der <= 6 ~ "Centro",
-                                  escala_izq_der >= 7 &
-                                  escala_izq_der <= 10 ~ "Derecha",
-                                  TRUE ~ "Ninguno"
-                             )
-                          )
-
-# =====================================================
-# ETIQUETAS DE VARIABLES
-# =====================================================
-
-proc_data <- proc_data %>%
-  mutate(
-    sexo = factor(
-      sexo,
-      levels = c(1,2),
-      labels = c(
-        "Hombre",
-        "Mujer"
-      )
-    ),
-    satisfaccion_democracia = factor(
-      satisfaccion_democracia,
-      levels = c(1,2,3,4),
-      labels = c(
-        "Muy satisfecho",
-        "Mas bien satisfecho",
-        "No muy satisfecho",
-        "Nada satisfecho"
-      )
-    ),
-    apoyo_democracia = factor(
-      apoyo_democracia,
-      levels = c(1,2,3),
-      labels = c(
-        "Democracia preferible",
-        "Autoritarismo preferible",
-        "Da lo mismo el regimen"
-      )
-    ),
-    conf_institucion_electoral = factor(
-      conf_institucion_electoral,
+    confianza_congreso = factor(
+      confianza_congreso,
       levels = c(1,2,3,4),
       labels = c(
         "Mucha confianza",
@@ -140,48 +108,105 @@ proc_data <- proc_data %>%
         "Ninguna confianza"
       )
     ),
-    posicion_politica = factor(
-      posicion_politica,
-      levels = c(
-        "Izquierda",
-        "Centro",
-        "Derecha",
-        "Ninguno"
+    confianza_institucion_electoral = factor(
+      confianza_institucion_electoral,
+      levels = c(1,2,3,4),
+      labels = c(
+        "Mucha confianza",
+        "Algo de confianza",
+        "Poca confianza",
+        "Ninguna confianza"
+      )
+    ),
+    confianza_ffaa = factor(
+      confianza_ffaa,
+      levels = c(1,2,3,4),
+      labels = c(
+        "Mucha confianza",
+        "Algo de confianza",
+        "Poca confianza",
+        "Ninguna confianza"
+      )
+    ),
+    confianza_policia = factor(
+      confianza_policia,
+      levels = c(1,2,3,4),
+      labels = c(
+        "Mucha confianza",
+        "Algo de confianza",
+        "Poca confianza",
+        "Ninguna confianza"
+      )
+    ),
+    confianza_poder_judicial = factor(
+      confianza_poder_judicial,
+      levels = c(1,2,3,4),
+      labels = c(
+        "Mucha confianza",
+        "Algo de confianza",
+        "Poca confianza",
+        "Ninguna confianza"
       )
     )
   )
 
-# =====================================================
-# TABLA DESCRIPTIVA
-# VARIABLE CONTINUA
-# =====================================================
-
-tabla_descriptivos <- data.frame(
-  Variable = c("Escala izquierda-derecha"),
-  media = c(
-    round(mean(proc_data$escala_izq_der, na.rm = TRUE),2)
-  ),
-  mediana = c(
-    round(median(proc_data$escala_izq_der, na.rm = TRUE),2)
-  ),
-  sd = c(
-    round(sd(proc_data$escala_izq_der, na.rm = TRUE),2)
-  ),
-  min = c(
-    min(proc_data$escala_izq_der, na.rm = TRUE)
-  ),
-  max = c(
-    max(proc_data$escala_izq_der, na.rm = TRUE)
-  ),
-  n = c(
-    sum(!is.na(proc_data$escala_izq_der))
+proc_data <- proc_data %>%
+  mutate(
+    posicion_politica = case_when(
+      escala_izq_der >= 0 & escala_izq_der <= 3 ~ "Izquierda",
+      escala_izq_der >= 4 & escala_izq_der <= 6 ~ "Centro",
+      escala_izq_der >= 7 & escala_izq_der <= 10 ~ "Derecha",
+      TRUE ~ NA_character_
+    )
   )
-)
+```
+
+# Descriptivos de nuestras variables
+
+# Posicion Politica
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+proc_data <- proc_data %>%
+  mutate(
+    posicion_politica = case_when(
+      escala_izq_der >= 0 &
+      escala_izq_der <= 3 ~ "Izquierda",
+
+      escala_izq_der >= 4 &
+      escala_izq_der <= 6 ~ "Centro",
+
+      escala_izq_der >= 7 &
+      escala_izq_der <= 10 ~ "Derecha"
+    )
+  )
+
+tabla_posicion <- proc_data %>%
+  count(posicion_politica) %>%
+  mutate(
+    porcentaje = round(n/sum(n)*100,2)
+  )
 
 kable(
-  tabla_descriptivos,
-  caption = "Tabla de descriptivos para posicion politica"
+  tabla_posicion,
+  caption = "Tabla de frecuencias de posicion politica"
 )
+
+ggplot(proc_data,
+       aes(x = posicion_politica)) +
+
+  geom_bar() +
+
+  labs(
+    title = "Distribucion de posicion politica",
+    x = "Posicion politica",
+    y = "Frecuencia"
+  )
+```
+
+# Variable Sexo
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 # =====================================================
 # TABLAS DE FRECUENCIA
@@ -200,206 +225,334 @@ kable(
   caption = "Tabla de frecuencias de sexo"
 )
 
+```
+
+# Variable confianza en el poder judicial
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
 # =====================================================
 
-# Posicion politica
+# Confianza en el poder judicial
 
-tabla_posicion <- proc_data %>%
-  count(posicion_politica) %>%
+tabla_judicial <- proc_data %>%
+  count(confianza_poder_judicial) %>%
   mutate(
     porcentaje = round(n/sum(n)*100,2)
   )
 
 kable(
-  tabla_posicion,
-  caption = "Tabla de frecuencias de posicion politica"
+  tabla_judicial,
+  caption = "Tabla de frecuencias confianza en el Poder Judicial"
 )
+
+# Grafico confianza poder judicial
+
+ggplot(proc_data,
+       aes(x = confianza_poder_judicial)) +
+
+  geom_bar() +
+
+  labs(
+    title = "Confianza en el Poder Judicial",
+    x = "Nivel de confianza",
+    y = "Frecuencia"
+  )
+
+```
+
+# Variable Congreso
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 # =====================================================
 
-# Satisfaccion con la democracia
+# Confianza en el congreso
 
-tabla_satisfaccion <- proc_data %>%
-  count(satisfaccion_democracia) %>%
+tabla_congreso <- proc_data %>%
+  count(confianza_congreso) %>%
   mutate(
     porcentaje = round(n/sum(n)*100,2)
   )
 
 kable(
-  tabla_satisfaccion,
-  caption = "Tabla de frecuencias de satisfaccion con la democracia"
+  tabla_congreso,
+  caption = "Tabla de frecuencias confianza en el Congreso"
 )
 
-# =====================================================
+# Grafico confianza en el progreso
 
-# Apoyo a la democracia
+ggplot(proc_data,
+       aes(x = confianza_congreso)) +
 
-tabla_apoyo <- proc_data %>%
-  count(apoyo_democracia) %>%
-  mutate(
-    porcentaje = round(n/sum(n)*100,2)
+  geom_bar() +
+
+  labs(
+    title = "Confianza en el Congreso",
+    x = "Nivel de confianza",
+    y = "Frecuencia"
   )
 
-kable(
-  tabla_apoyo,
-  caption = "Tabla de frecuencias de apoyo a la democracia"
-)
+```
+
+# Variable Institucion Electoral
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 # =====================================================
 
 # Confianza institucion electoral
 
-tabla_confianza <- proc_data %>%
-  count(conf_institucion_electoral) %>%
+tabla_electoral <- proc_data %>%
+  count(confianza_institucion_electoral) %>%
   mutate(
     porcentaje = round(n/sum(n)*100,2)
   )
 
 kable(
-  tabla_confianza,
-  caption = "Tabla de frecuencias de confianza en institucion electoral"
+  tabla_electoral,
+  caption = "Tabla de frecuencias confianza en la institucion electoral"
 )
 
-# =====================================================
-# GRAFICOS
-# =====================================================
-
-# Grafico posicion politica
+# Grafico confianza en la institucion electoral
 
 ggplot(proc_data,
-       aes(x = posicion_politica)) +
+       aes(x = confianza_institucion_electoral)) +
 
   geom_bar() +
 
   labs(
-    title = "Distribucion de posicion politica",
-    x = "Posicion politica",
+    title = "Confianza en la institucion electoral",
+    x = "Nivel de confianza",
     y = "Frecuencia"
   )
 
+```
+
+# Variable Policia
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # =====================================================
 
-# Grafico satisfaccion democracia
+# Confianza en la policia
+
+tabla_policia <- proc_data %>%
+  count(confianza_policia) %>%
+  mutate(
+    porcentaje = round(n/sum(n)*100,2)
+  )
+
+kable(
+  tabla_policia,
+  caption = "Tabla de frecuencias confianza en la policia"
+)
+
+# Grafico confianza en las policias
 
 ggplot(proc_data,
-       aes(x = satisfaccion_democracia)) +
+       aes(x = confianza_policia)) +
 
   geom_bar() +
 
   labs(
-    title = "Satisfaccion con la democracia",
-    x = "Nivel de satisfaccion",
+    title = "Confianza en la policia",
+    x = "Nivel de confianza",
+    y = "Frecuencia"
+  )
+
+```
+
+# Variable Fuerzas Armadas
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# =====================================================
+
+# Confianza en las fuerzas armadas
+
+tabla_ffaa <- proc_data %>%
+  count(confianza_ffaa) %>%
+  mutate(
+    porcentaje = round(n/sum(n)*100,2)
+  )
+
+kable(
+  tabla_ffaa,
+  caption = "Tabla de frecuencias confianza en Fuerzas Armadas"
+)
+
+# Grafico confianza en las fuerzas armadas
+
+ggplot(proc_data,
+       aes(x = confianza_ffaa)) +
+
+  geom_bar() +
+
+  labs(
+    title = "Confianza en Fuerzas Armadas",
+    x = "Nivel de confianza",
     y = "Frecuencia"
   )
 ```
 
-## Creacion de Indice de satisfaccion con la democracia y correlacion con posicion politica
+# Analisis
+
+Para poder trabajar de mejor manerad y ordenada los datos, se recodifico la variable escala izq-der para poder tratar la variable solo en 3 grupos, izquierda, centro y derecha las cuales estan categorizadas con su grupo correspondiente de 0 a 3 (izquierda), 4 a 6 (centro) y 7 a 10 (derecha). Los resultados descriptivos muestran que la muestra analizada presenta una distribución política relativamente concentrada en posiciones de centro, aunque existe una dispersión ideológica importante entre los encuestados. La escala izquierda-derecha presenta una media de 4.96 y una mediana de 5, lo que indica que, en promedio, los encuestados tienden a posicionarse hacia el centro político, lo que tambien puede demostrar la desafeccion hacia sectores politicos tradicionales como la izquierda y la derecha.. Asimismo, la desviación estándar de 2.96 evidencia una importante dispersión ideológica dentro de la muestra. La distribucion de nuestra variable relacionada al sexo, se observa que la muestra esta relativamente equilibrada con una ligera mayoria de hombres (51.28%) frente a mujeres (48.72%)
+
+Respecto a la confianza institucional, las instituciones políticas asociadas al sistema representativo y al , como el Congreso y el Poder Judicial, presentan niveles relativamente bajos de confianza, predominando las categorías de “poca confianza” y “ninguna confianza”. Esto podría reflejar percepciones críticas hacia el funcionamiento de las instituciones democráticas en América Latina. Por otro lado, instituciones como las Fuerzas Armadas y, en menor medida, la policía, muestran niveles de confianza relativamente más altos en comparación con las demás instituciones analizadas. Esto evidencia diferencias importantes en la legitimidad percibida de las distintas instituciones estatales.
+
+En términos generales, con los resultados obtenidos, podemos observar que también podrían estar reflejando bajos niveles de satisfacción con el funcionamiento de la democracia en América Latina. La predominancia de respuestas asociadas a “poca confianza” y “ninguna confianza” en instituciones centrales del sistema democrático podría interpretarse como una señal de debilitamiento de la legitimidad institucional y de percepciones críticas respecto del desempeño democrático. En este sentido, la baja confianza institucional no necesariamente implica un rechazo a la democracia como régimen político, pero sí podría evidenciar insatisfacción con la manera en que las instituciones democráticas estarian operando y representando a las personas de la region.
+
+
+## Creacion de Indice de confianza institucional y correlacion con posicion politica
+
+Con el objetivo de sintetizar las variables incluidas en este estudio, se procedió a construir un índice de confianza institucional compuesto por indicadores asociados a la confianza en distintas instituciones políticas y estatales. Para ello, se seleccionaron las variables correspondientes a confianza en el Congreso, institución electoral, Fuerzas Armadas, policía y Poder Judicial. Debido a que todas las variables utilizadas compartían la misma escala de respuesta, no fue necesario realizar transformaciones adicionales para su estandarización. Posteriormente, las variables fueron recodificadas de manera que los valores más bajos representaran mayores niveles de confianza institucional, mientras que los valores más altos indicaran menores niveles de confianza.
+
+# Correlaciones
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
-
 library(psych)
+
+# =====================================================
+# Tabla de Correlaciones
+# =====================================================
+
 
 correlaciones_num <- proc_data %>%
   select(
-    satisfaccion_democracia,
-    apoyo_democracia,
-    conf_institucion_electoral
+    confianza_congreso,
+    confianza_institucion_electoral,
+    confianza_ffaa,
+    confianza_policia,
+    confianza_poder_judicial
   ) %>%
+  
   mutate(across(everything(), as.numeric))
-
-resultado_alpha <- psych::alpha(correlaciones_num)
-
-alpha_total <- resultado_alpha$total
-alpha_raw <- resultado_alpha$total$raw_alpha
-
-proc_data$indice_democracia <- rowMeans(
-  correlaciones_num,
-  na.rm = TRUE
-)
-
-resumen_indice <- summary(proc_data$indice_democracia)
-
-sd_indice <- sd(proc_data$indice_democracia,
-                na.rm = TRUE)
-
-tabla_indice <- data.frame(
-  Variable = "Indice de percepcion democratica",
-  media = round(
-    mean(proc_data$indice_democracia,
-         na.rm = TRUE),2),
-  mediana = round(
-    median(proc_data$indice_democracia,
-           na.rm = TRUE),2),
-  sd = round(
-    sd(proc_data$indice_democracia,
-       na.rm = TRUE),2),
-  min = min(proc_data$indice_democracia,
-            na.rm = TRUE),
-  max = max(proc_data$indice_democracia,
-            na.rm = TRUE),
-  n = sum(!is.na(proc_data$indice_democracia))
-)
-
-kable(
-  tabla_indice,
-  caption = "Tabla descriptiva del indice de percepcion democratica"
-)
 
 tabla_cor <- cor(
   correlaciones_num,
   use = "complete.obs"
 )
 
-kable(
-  tabla_cor,
-  caption = "Tabla de correlaciones"
-)
+```
 
-ggplot(proc_data,
-       aes(x = indice_democracia)) +
-  geom_histogram(bins = 10) +
-  labs(
-    title = "Distribucion del indice de percepcion democratica",
-    x = "Indice",
-    y = "Frecuencia"
-  )
+Al analizar la correlación entre las variables utilizadas para la construcción del índice, se observa que todas presentan asociaciones positivas entre sí. Esto nos hace entender que las correlaciones observadas son moderadas y coherentes teóricamente, al no presentarse numeros negativos se sugiere que las variables seleccionadas logran captar una dimensión común asociada, donde apuntan hacia la misma direccion. Adicionalmente podemos observar que las correlaciones entre variables oscilan entre los 0.30 y los 0.60 por lo que presentan un nivel moderado, tienden a medir esta dimension en comun asociada a la confianza institucional.
 
-correlacion <- cor(
-  proc_data$indice_democracia,
-  proc_data$escala_izq_der,
-  use = "complete.obs"
-)
+# Alfa de Cronbach
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# =====================================================
+# ALFA DE CRONBACH
+# =====================================================
 
-ggplot(proc_data,
-       aes(x = escala_izq_der,
-           y = indice_democracia)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth(method = "lm") +
-  labs(
-    title = "Relacion entre posicion politica e indice democratico",
-    x = "Escala izquierda-derecha",
-    y = "Indice de percepcion democratica"
-  )
+resultado_alpha <- psych::alpha(correlaciones_num)
 
-proc_data$indice_democracia <- rowMeans(
+resultado_alpha
+
+# Valor alfa
+
+resultado_alpha$total$raw_alpha
+```
+
+Posteriormente, se evaluó la consistencia interna del índice mediante el coeficiente alfa de Cronbach, obteniendo un resultado de 0.79. Este valor evidencia la fiabilidad interna entre las variables seleccionadas, llevandonos a observar que nos estaria indicando que los indicadores utilizados logran medir de manera consistente una dimensión común vinculada a la confianza institucional.
+
+# Indice
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+# =====================================================
+# CREACION DEL INDICE
+# =====================================================
+
+proc_data$indice_confianza <- rowMeans(
   correlaciones_num,
   na.rm = TRUE
 )
 
-tabla_cruzada <- table(
-  proc_data$posicion_politica,
-  proc_data$satisfaccion_democracia
+summary(proc_data$indice_confianza)
+
+sd(proc_data$indice_confianza,
+   na.rm = TRUE)
+
+
+# Histograma del indice
+
+ggplot(proc_data,
+       aes(x = indice_confianza)) +
+
+  geom_histogram(bins = 10) +
+
+  labs(
+    title = "Distribucion del indice de confianza institucional",
+    x = "Indice de confianza institucional",
+    y = "Frecuencia"
+  )
+
+# Tabla descriptiva del indice
+
+tabla_indice <- data.frame(Variable = "Indice de confianza institucional",
+  media = round(
+    mean(proc_data$indice_confianza,
+         na.rm = TRUE),2),
+  mediana = round(
+    median(proc_data$indice_confianza,
+           na.rm = TRUE),2),
+  sd = round(
+    sd(proc_data$indice_confianza,
+       na.rm = TRUE),2),
+  min = min(proc_data$indice_confianza,
+            na.rm = TRUE),
+  
+  max = max(proc_data$indice_confianza,
+            na.rm = TRUE),
+  n = sum(!is.na(proc_data$indice_confianza))
+)
+
+# Indice de confianza segun posicion politica
+
+proc_data$sexo <- factor(
+  proc_data$sexo,
+  levels = c(1, 2),
+  labels = c("Hombre", "Mujer")
 )
 
 ggplot(proc_data,
        aes(x = posicion_politica,
-           fill = satisfaccion_democracia)) +
+           fill = confianza_congreso)) +
+
   geom_bar(position = "fill") +
+
+  facet_wrap(~sexo) +
+
   labs(
-    title = "Satisfaccion con la democracia segun posicion politica",
+    title = "Confianza en el Congreso segun posicion politica y sexo",
     x = "Posicion politica",
     y = "Proporcion",
-    fill = "Satisfaccion"
+    fill = "Nivel de confianza"
   )
 ```
+
+Los resultados descriptivos del índice muestran niveles relativamente bajos de confianza institucional en la muestra analizada. En términos generales, predominan percepciones críticas hacia distintas instituciones políticas y estatales, especialmente aquellas vinculadas al sistema representativo como lo es el congreso y el poder judicial. Esto podría reflejar menores niveles de legitimidad percibida del funcionamiento democrático en América Latina, considerando que la confianza institucional constituye una dimensión relevante para la satisfacción y evaluación del sistema democrático por parte de la ciudadanía. 
+
+# Relacion con posicion politica
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+cor(
+  proc_data$indice_confianza,
+  proc_data$escala_izq_der,
+  use = "complete.obs"
+)
+
+```
+
+En este caso podemos observar que existe una relacion muy debil entre ambas variables (confianza institucional y posicion politica) -0.0785 la cual nos permite comprender que la posicion politica de los encuestados no se relaciona de manera importante con los niveles de confianza institucional. Se puede inferir por la correlacion negativa que la magnitud del coeficiente es extremadamente baja, la asociacion que buscamos observar es inexistente. Considerando que el índice fue recodificado de manera que valores más bajos representan mayor confianza institucional, el resultado podría sugerir que los sectores de derecha presentan niveles ligeramente mayores de confianza en las instituciones respecto de los sectores de izquierda. Sin embargo, la intensidad de esta relación es muy pequeña, por lo que no puede afirmarse que la orientación ideológica sea un factor determinante en la confianza institucional dentro de la muestra analizada.Si bien podemos tambien descifrar que a pesar de haber separado tambien por sexo la muestra, se presenta una especie de homogeneidad en los resultados, al observar que la sensacion de poca confianza con las instituciones se mantiene a pesar de buscar relacionarlo con otras variables, por lo que el genero y/o la posicion politica no estarian influenciando en una mejora o disminucion del indice de confianza en las instituciones, cómo la desconfianza institucional no se concentra exclusivamente en un grupo específico, sino que constituye una percepción relativamente extendida entre hombres y mujeres dentro de la región.
+
+# Conclusiones
+
+Conclusiones
+
+A partir de los resultados obtenidos en esta investigación, es posible observar que la confianza institucional en América Latina presenta niveles relativamente bajos, especialmente en instituciones asociadas directamente al funcionamiento del sistema democrático representativo, como el Congreso y el Poder Judicial. En la mayoría de los casos predominan las categorías de “poca confianza” y “ninguna confianza”, lo que evidencia percepciones críticas respecto del desempeño de distintas instituciones políticas y estatales dentro de la región. En contraste, instituciones como las Fuerzas Armadas y, en menor medida, la policía, presentan niveles de confianza relativamente más altos en comparación con las demás instituciones analizadas, aunque no muy diferenciales presentando una generalidad de ese de ese pensamiento, tambien que existen  pequeñas diferencias en la valoración ciudadana dependiendo del tipo de institución y de la función que estas cumplen dentro de la sociedad.
+
+La construcción del índice de confianza institucional permitió sintetizar distintas dimensiones asociadas a la percepción ciudadana sobre el funcionamiento institucional. Asimismo, la consistencia interna obtenida mediante el alfa de Cronbach evidenció que las variables utilizadas logran medir de manera adecuada una dimensión común vinculada a la confianza institucional, otorgándole la coherencia metodológica para poder construirse. Adicionalmente a traves del analisis se observa que los datos indican que la orientación política de las personas no parece constituir un factor determinante para explicar los niveles de confianza institucional presentes en la muestra analizada. Aunque los sectores más cercanos a la derecha podrían presentar niveles ligeramente mayores de confianza institucional, la intensidad de la relación observada es mínima y carece de una asociación sustantivamente fuerte. Como tambien por otra parte el genero tampoco seria una influencia en buscar diferenciar la distribucion de la muestra, veanse asi en los distintos graficos como se puede apreciar una constante en las opciones de los encuesados hacia la poca confianza institucional a pesar de ser divido por ideologia y/o genero.
+
+Este resultado adquiere relevancia sociológica, ya que permite pensar que la desconfianza hacia las instituciones democráticas podría estar relativamente extendida entre distintos sectores ideológicos y no únicamente concentrada en grupos políticos específicos. En otras palabras, el debilitamiento de la confianza institucional parece constituir un fenómeno transversal dentro de la ciudadanía latinoamericana. En términos generales, los resultados obtenidos permiten establecer una relación importante entre confianza institucional, como una forma de observar una posibilidad de legitimacion y/o satisfacción con el funcionamiento de la democracia. La baja confianza observada en instituciones fundamentales del sistema político podría reflejar percepciones de ineficiencia, baja representación o distanciamiento entre las instituciones democráticas y la ciudadanía. En este sentido, la confianza institucional se vuelve un elemento central para comprender la evaluación que las personas realizan sobre el funcionamiento de la democracia en América Latina. Sin embargo, los resultados no necesariamente permiten afirmar la existencia de un rechazo hacia la democracia como régimen político, sino más bien una evaluación crítica sobre la manera en que las democracias latinoamericanas están funcionando en la práctica. De esta forma, el debilitamiento de la confianza institucional puede interpretarse como una señal de insatisfacción con el desempeño concreto de las instituciones democráticas más que como una oposición a los principios democráticos en sí mismos.
+
