@@ -531,6 +531,306 @@ confianza_poder_judicial        0.07 0.20 0.36 0.37    0</code></pre>
 <p>A partir de los resultados obtenidos en esta investigación, es posible observar que la confianza institucional en América Latina presenta niveles relativamente bajos, especialmente en instituciones asociadas directamente al funcionamiento del sistema democrático representativo, como el Congreso y el Poder Judicial. En la mayoría de los casos predominan las categorías de “poca confianza” y “ninguna confianza”, lo que evidencia percepciones críticas respecto del desempeño de distintas instituciones políticas y estatales dentro de la región. En contraste, instituciones como las Fuerzas Armadas y, en menor medida, la policía, presentan niveles de confianza relativamente más altos en comparación con las demás instituciones analizadas, aunque no muy diferenciales presentando una generalidad de ese de ese pensamiento, tambien que existen pequeñas diferencias en la valoración ciudadana dependiendo del tipo de institución y de la función que estas cumplen dentro de la sociedad.</p>
 <p>La construcción del índice de confianza institucional permitió sintetizar distintas dimensiones asociadas a la percepción ciudadana sobre el funcionamiento institucional. Asimismo, la consistencia interna obtenida mediante el alfa de Cronbach evidenció que las variables utilizadas logran medir de manera adecuada una dimensión común vinculada a la confianza institucional, otorgándole la coherencia metodológica para poder construirse. Adicionalmente a traves del analisis se observa que los datos indican que la orientación política de las personas no parece constituir un factor determinante para explicar los niveles de confianza institucional presentes en la muestra analizada. Aunque los sectores más cercanos a la derecha podrían presentar niveles ligeramente mayores de confianza institucional, la intensidad de la relación observada es mínima y carece de una asociación sustantivamente fuerte. Como tambien por otra parte el genero tampoco seria una influencia en buscar diferenciar la distribucion de la muestra, veanse asi en los distintos graficos como se puede apreciar una constante en las opciones de los encuesados hacia la poca confianza institucional a pesar de ser divido por ideologia y/o genero.</p>
 <p>Este resultado adquiere relevancia sociológica, ya que permite pensar que la desconfianza hacia las instituciones democráticas podría estar relativamente extendida entre distintos sectores ideológicos y no únicamente concentrada en grupos políticos específicos. En otras palabras, el debilitamiento de la confianza institucional parece constituir un fenómeno transversal dentro de la ciudadanía latinoamericana. En términos generales, los resultados obtenidos permiten establecer una relación importante entre confianza institucional, como una forma de observar una posibilidad de legitimacion y/o satisfacción con el funcionamiento de la democracia. La baja confianza observada en instituciones fundamentales del sistema político podría reflejar percepciones de ineficiencia, baja representación o distanciamiento entre las instituciones democráticas y la ciudadanía. En este sentido, la confianza institucional se vuelve un elemento central para comprender la evaluación que las personas realizan sobre el funcionamiento de la democracia en América Latina. Sin embargo, los resultados no necesariamente permiten afirmar la existencia de un rechazo hacia la democracia como régimen político, sino más bien una evaluación crítica sobre la manera en que las democracias latinoamericanas están funcionando en la práctica. De esta forma, el debilitamiento de la confianza institucional puede interpretarse como una señal de insatisfacción con el desempeño concreto de las instituciones democráticas más que como una oposición a los principios democráticos en sí mismos.</p>
+</section>
+<section id="regresiones" class="level1">
+<h1>Regresiones</h1>
+<p>Con el objetivo de profundizar el análisis realizado anteriormente, se estimaron modelos de regresión lineal y regresión logística. La regresión lineal permite analizar la relación entre la posición política y el nivel de confianza institucional medido a través del índice construido previamente. Por otra parte, la regresión logística permite estimar la probabilidad de presentar altos niveles de confianza institucional según la posición política de las personas encuestadas.</p>
+</section>
+<section id="regresion-lineal" class="level1">
+<h1>Regresion Lineal</h1>
+<p>En primer lugar, se estimaron modelos de regresión lineal utilizando como variable dependiente el índice de confianza institucional. En este índice, los valores más bajos representan mayores niveles de confianza institucional, mientras que los valores más altos representan menores niveles de confianza. La variable independiente principal es la posición política, mientras que el sexo se incorpora como variable de control.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Confianza institucional</caption>
+<colgroup>
+<col style="width: 37%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Modelo 1</th>
+<th>Modelo 2</th>
+<th>Modelo 3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercepto</td>
+<td>2.944***</td>
+<td>2.927***</td>
+<td>2.958***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(0.012)</td>
+<td>(0.013)</td>
+<td>(0.013)</td>
+</tr>
+<tr class="odd">
+<td>Centro (Ref. Izquierda)</td>
+<td>-0.051***</td>
+<td>-0.051***</td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(0.015)</td>
+<td>(0.015)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Derecha (Ref. Izquierda)</td>
+<td>-0.152***</td>
+<td>-0.152***</td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(0.017)</td>
+<td>(0.017)</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Mujer (Ref. Hombre)</td>
+<td></td>
+<td>0.033**</td>
+<td>0.033**</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>(0.012)</td>
+<td>(0.012)</td>
+</tr>
+<tr class="odd">
+<td>Escala izquierda-derecha</td>
+<td></td>
+<td></td>
+<td>-0.019***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+<td>(0.002)</td>
+</tr>
+<tr class="odd">
+<td>R2</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.01</td>
+</tr>
+<tr class="even">
+<td>Adj. R2</td>
+<td>0.01</td>
+<td>0.01</td>
+<td>0.01</td>
+</tr>
+<tr class="odd">
+<td>Num. obs.</td>
+<td>13591</td>
+<td>13591</td>
+<td>13591</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td colspan="4"><ul>
+<li>p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</li>
+</ul></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+</section>
+<section id="pequeño-analisis" class="level1">
+<h1>Pequeño analisis</h1>
+<p>En los modelos de regresión lineal, la categoría de referencia corresponde a las personas ubicadas en la izquierda política. Por lo tanto, los coeficientes de centro y derecha deben interpretarse en comparación con este grupo. Los resultados muestran que tanto el centro como la derecha presentan coeficientes negativos y estadísticamente significativos. Dado que el índice de confianza institucional mantiene su escala original, donde valores más bajos representan mayores niveles de confianza institucional y valores más altos representan menores niveles de confianza, estos coeficientes negativos indican que las personas de centro y derecha presentan mayores niveles de confianza institucional que las personas de izquierda. En el Modelo 2, al incorporar el sexo como variable de control, los coeficientes de centro y derecha se mantienen prácticamente iguales, lo que sugiere que la relación entre posición política y confianza institucional no cambia de manera importante al controlar por sexo. A su vez, el coeficiente asociado a las mujeres es positivo y estadísticamente significativo, lo que indica que las mujeres presentan niveles ligeramente menores de confianza institucional en comparación con los hombres. Finalmente, el Modelo 3 utiliza la escala izquierda-derecha como variable continua. El coeficiente negativo de esta variable indica que, a medida que las personas se posicionan más hacia la derecha, el valor del índice disminuye. Como valores más bajos del índice representan mayor confianza institucional, este resultado sugiere una asociación entre posiciones más hacia la derecha y mayores niveles de confianza institucional. Sin embargo, los valores de R2 son bajos en todos los modelos, por lo que la capacidad explicativa de estas variables es reducida.</p>
+</section>
+<section id="valores-predichos-de-la-regresion-lineal" class="level1">
+<h1>Valores predichos de la regresion lineal</h1>
+<p>Con el objetivo de visualizar de manera más clara los resultados del modelo lineal, se estimaron valores predichos del índice de confianza institucional según posición política.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Practico_3_files/figure-html/grafico-lineal-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El gráfico de valores predichos permite observar las diferencias estimadas en el índice de confianza institucional según posición política. Como el índice mantiene su escala original, los valores más bajos indican mayores niveles de confianza institucional. En este sentido, si los valores predichos para centro y derecha son menores que los de izquierda, esto refuerza la interpretación de que estos grupos presentan mayores niveles estimados de confianza institucional. No obstante, las diferencias observadas son pequeñas, por lo que deben interpretarse con cautela.</p>
+</section>
+<section id="regresion-logistica" class="level1">
+<h1>Regresion logistica</h1>
+<p>En segundo lugar, se estimaron modelos de regresión logística. Para ello, se creó una variable binaria llamada alta confianza institucional. Esta variable distingue entre quienes presentan mayores niveles de confianza institucional y quienes presentan niveles bajos o medios de confianza.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    0     1 
+11538  2003 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        0         1 
+0.8520789 0.1479211 </code></pre>
+</div>
+</div>
+<p>A continuación, se estiman tres modelos de regresión logística. El primer modelo incluye solamente la posición política como variable independiente. El segundo modelo incorpora el sexo como variable de control. Finalmente, el tercer modelo incorpora la posición política, el sexo y la situación económica actual, cumpliendo así con el criterio de la rúbrica de incluir al menos tres variables independientes.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Alta confianza institucional</caption>
+<colgroup>
+<col style="width: 55%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Modelo 1</th>
+<th>Modelo 2</th>
+<th>Modelo 3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Intercepto</td>
+<td>-1.877***</td>
+<td>-1.854***</td>
+<td>-0.608***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(0.049)</td>
+<td>(0.054)</td>
+<td>(0.167)</td>
+</tr>
+<tr class="odd">
+<td>Centro (Ref. Izquierda)</td>
+<td>-0.098</td>
+<td>-0.099</td>
+<td>-0.130*</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(0.062)</td>
+<td>(0.062)</td>
+<td>(0.064)</td>
+</tr>
+<tr class="odd">
+<td>Derecha (Ref. Izquierda)</td>
+<td>0.538***</td>
+<td>0.538***</td>
+<td>0.474***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td>(0.064)</td>
+<td>(0.064)</td>
+<td>(0.066)</td>
+</tr>
+<tr class="odd">
+<td>Mujer (Ref. Hombre)</td>
+<td></td>
+<td>-0.045</td>
+<td>0.003</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>(0.049)</td>
+<td>(0.050)</td>
+</tr>
+<tr class="odd">
+<td>Situación económica buena (Ref. Muy buena)</td>
+<td></td>
+<td></td>
+<td>-0.220</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+<td>(0.171)</td>
+</tr>
+<tr class="odd">
+<td>Situación económica regular (Ref. Muy buena)</td>
+<td></td>
+<td></td>
+<td>-1.027***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+<td>(0.164)</td>
+</tr>
+<tr class="odd">
+<td>Situación económica mala (Ref. Muy buena)</td>
+<td></td>
+<td></td>
+<td>-1.744***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+<td>(0.170)</td>
+</tr>
+<tr class="odd">
+<td>Situación económica muy mala (Ref. Muy buena)</td>
+<td></td>
+<td></td>
+<td>-2.562***</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+<td>(0.189)</td>
+</tr>
+<tr class="odd">
+<td>Num. obs.</td>
+<td>13541</td>
+<td>13541</td>
+<td>13541</td>
+</tr>
+<tr class="even">
+<td>AIC</td>
+<td>11219.55</td>
+<td>11220.70</td>
+<td>10524.63</td>
+</tr>
+<tr class="odd">
+<td>BIC</td>
+<td>11242.09</td>
+<td>11250.75</td>
+<td>10584.74</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td colspan="4"><ul>
+<li>p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</li>
+</ul></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div>
+<p>En los modelos de regresión logística, la variable dependiente corresponde a alta confianza institucional. Esta variable toma el valor 1 cuando las personas presentan mayores niveles de confianza institucional y 0 cuando presentan niveles bajos o medios de confianza. De esta forma, se cumple con el requisito de trabajar con una variable dependiente dicotómica. El Modelo 1 incluye solo la posición política como variable independiente. El Modelo 2 incorpora el sexo como variable de control. Finalmente, el Modelo 3 incorpora tres variables independientes: posición política, sexo y situación económica actual. Con esto, el modelo cumple con el criterio solicitado por la rúbrica para la regresión logística. La categoría de referencia para la posición política es izquierda, por lo que los coeficientes de centro y derecha se interpretan en comparación con este grupo. En el caso del sexo, la categoría de referencia es hombre. Para la situación económica, la categoría de referencia es muy buena. En este tipo de modelo, un coeficiente positivo indica una mayor probabilidad de presentar alta confianza institucional, mientras que un coeficiente negativo indica una menor probabilidad.</p>
+</section>
+<section id="conclusiones-finales" class="level1">
+<h1>Conclusiones Finales</h1>
+<p>A partir de los análisis realizados, es posible concluir que la confianza institucional en América Latina presenta niveles relativamente bajos en la muestra estudiada. Tanto los resultados descriptivos como la construcción del índice muestran una tendencia general hacia la poca o nula confianza en instituciones centrales del sistema democrático, especialmente aquellas vinculadas al ámbito político y judicial, como el Congreso y el Poder Judicial. Esto permite sostener que la confianza institucional constituye una dimensión relevante para aproximarse a la legitimidad democrática y a las percepciones ciudadanas sobre el funcionamiento de la democracia en la región. La construcción del índice de confianza institucional mostró una consistencia interna adecuada, lo que permitió agrupar distintas variables de confianza en instituciones estatales en una medida común. De esta manera, el índice permitió sintetizar una dimensión general de confianza institucional y utilizarla posteriormente en los modelos de regresión. En este índice, los valores más bajos representaron mayores niveles de confianza, mientras que los valores más altos indicaron menores niveles de confianza institucional. Los resultados de la regresión lineal muestran que la posición política se relaciona de manera estadísticamente significativa con el índice de confianza institucional, aunque la magnitud de esta relación es reducida. En particular, las personas ubicadas en el centro y en la derecha presentan valores menores en el índice en comparación con las personas de izquierda, lo que indica mayores niveles de confianza institucional. Sin embargo, los bajos valores de R2 muestran que la capacidad explicativa de estos modelos es limitada, por lo que la posición política no puede considerarse un factor determinante para explicar la confianza institucional. Por su parte, la regresión logística permitió analizar la probabilidad de presentar alta confianza institucional. Los resultados muestran que las personas ubicadas en la derecha presentan una mayor probabilidad de pertenecer al grupo de alta confianza institucional en comparación con las personas de izquierda. En cambio, el centro presenta una diferencia menor y, en el modelo con controles, una probabilidad más baja respecto de la izquierda. Además, la situación económica actual aparece como una variable relevante, ya que a medida que empeora la percepción de la situación económica, disminuye la probabilidad de presentar alta confianza institucional. En conjunto, los resultados permiten afirmar que existen diferencias según posición política, especialmente entre izquierda y derecha, pero estas diferencias no son suficientes para explicar por completo la confianza institucional. Más bien, la desconfianza hacia las instituciones parece ser un fenómeno extendido y relativamente transversal dentro de la ciudadanía latinoamericana. Esto sugiere que el debilitamiento de la confianza institucional no responde únicamente a divisiones ideológicas, sino también a percepciones más amplias sobre el desempeño de las instituciones democráticas, la representación política y las condiciones sociales y económicas de la población. Finalmente, este trabajo permite sostener que la confianza institucional funciona como una dimensión importante para comprender la legitimidad democrática en América Latina. La baja confianza observada no necesariamente implica un rechazo a la democracia como régimen político, sino más bien una evaluación crítica hacia el funcionamiento concreto de sus instituciones. En este sentido, fortalecer la legitimidad democrática requiere no solo atender las diferencias ideológicas, sino también mejorar la capacidad de las instituciones para responder a las expectativas, demandas y condiciones de vida de la ciudadanía.</p>
 
 </section>
 
