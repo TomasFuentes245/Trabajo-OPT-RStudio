@@ -1,0 +1,8 @@
+"0","kable(
+  tabla_sexo,
+  caption = ""Tabla de frecuencias de sexo""
+)
+"
+"2","Error en kable(tabla_sexo, caption = ""Tabla de frecuencias de sexo""): 
+  no se pudo encontrar la función ""kable""
+"
